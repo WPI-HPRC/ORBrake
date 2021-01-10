@@ -10,7 +10,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 
     private double velocity;
     private double drag_coef = 1.3;
-    private double final density = 1.225;
+    private double density = 1.225;
 
 	public ORBrakeSimulationListener() {
 		super();

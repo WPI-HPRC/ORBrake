@@ -2,12 +2,12 @@
 
     <property name="src.dir" value="${basedir}/src"/>
     <property name="build.dir" value="${basedir}/build"/>
-
+	<property environment="env"/>
 
     <target name="build">
         <mkdir dir="${build.dir}"/>
         <javac debug="true" srcdir="${src.dir}" destdir="${build.dir}" classpath="OpenRocket-15.03.jar" includeantruntime="false" source="1.6" target="1.6"/>
-    	<jar destfile="ORBrake.jar" basedir="${build.dir}"/>
+    	<jar destfile="${env.APPDATA}/OpenRocket/Plugins/ORBrake.jar" basedir="${build.dir}"/>
     </target>
 
 </project>
