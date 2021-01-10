@@ -13,6 +13,7 @@ You can also build it yourself from the source code by following the Contributin
 To use ORBrake, it must be enabled on your simulation.  To do this, create a new simulation or edit an existing one.  In the `Edit Simulation` window, go to the `Simulation options` tab.  Finally, click `Add Extension` and select ORBrake under the `Flight` tab.  The plugin settings window will open.  Click `close` once you are done.  You can then execute the simulation. 
 
 ## Contributing
+ORBrake is written in Java.  This section explains what dependencies are required to build the project as well as how to configure the development environment.
 ### Dependencies
 1. [jdk 8](https://adoptopenjdk.net/): OpenRocket requires Java 8.  More recent versions are incompatible.  To compile code, jdk 8 is required.
 1. [Apache Ant](https://mkyong.com/ant/how-to-install-apache-ant-on-windows/): Ant is used to automate the build process.
