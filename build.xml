@@ -6,8 +6,9 @@
 
     <target name="build">
         <mkdir dir="${build.dir}"/>
-        <javac debug="true" srcdir="${src.dir}" destdir="${build.dir}" classpath="OpenRocket-15.03.jar" includeantruntime="false" source="1.6" target="1.6"/>
+        <javac debug="true" srcdir="${src.dir}" destdir="${build.dir}" classpath="OpenRocket-15.03.jar" includeantruntime="false" source="1.8" target="1.8"/>
     	<jar destfile="${env.APPDATA}/OpenRocket/Plugins/ORBrake.jar" basedir="${build.dir}"/>
+    	<java jar="OpenRocket-15.03.jar" fork="true"/>
     </target>
 
 </project>
