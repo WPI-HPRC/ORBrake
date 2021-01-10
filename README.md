@@ -18,7 +18,7 @@ ORBrake is written in Java.  This section explains what dependencies are require
 ### Dependencies
 1. [jdk 8](https://adoptopenjdk.net/): OpenRocket requires Java 8.  More recent versions are incompatible.  To compile code, jdk 8 is required.
 1. [Apache Ant](https://mkyong.com/ant/how-to-install-apache-ant-on-windows/): Ant is used to automate the build process.
-1. Eclipse *[Recomended]*: For convenience, you can use the Sloeber Eclipse that is used for HPRC's embedded firmware programs.  There is no reason you couldn't use other IDEs like IDEA or VIM (depending on how much of a hacker you are) but the environment setup will be up to you.
+1. [Eclipse](https://github.com/WPIRoboticsEngineering/ESP32ArduinoEclipseInstaller) *[Recomended]*: While not explicetly required for this project, you can use the Sloeber Eclipse that is used for HPRC's embedded firmware programs.  There is no reason you couldn't use other IDEs like IDEA or VIM (depending on how much of a hacker you are) but the environment setup will be up to you.
 1. OpenRocket 15.03: For obvious reasons, this OpenRocket plugin requires OpenRocket to run.  Version 15.03, the most recent release, is included in this repo.
 
 ### Eclipse Setup
