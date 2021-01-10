@@ -4,10 +4,11 @@ An open rocket extension for controllable air brakes.
 ## Installing
 1. To install ORBrake, click on `Releases` on the right.  
 1. Under the most recent version, click on `Assets` and then download `ORBrake.jar`.  
-1. Navigate to your OpenRocket Plugin folder.  On Windows this is likely `C:\Users\[USER]\AppData\Roaming\OpenRocket\Plugins`.  If this doesn't work, you can find the OpenRocket folder within your Application Data folder.  To get to the AppData folder, press `Windows + R` then type `%appdata%` and hit enter before navigating to `OpenRocket\Plugins`.
-1. Move `ORBreak.jar` from your Downloads folder to the OpenRocket Plugin folder.
+1. Save `ORBrake.jar` to your OpenRocket Plugin folder.
+    * On Windows, the OpenRocket Plugin folder is likely `C:\Users\[USER]\AppData\Roaming\OpenRocket\Plugins`.  
+    * If this doesn't work, you can find the OpenRocket folder within your Application Data folder.  To get to the AppData folder, press `Windows + R` then type `%appdata%` and hit enter before navigating to `OpenRocket\Plugins`.
 
-You can also build it yourself from the source code by following the Contributing section.
+Alternativley can also build it yourself from the source code by following the Contributing section.  
 
 ## Using the Plugin
 To use ORBrake, it must be enabled on your simulation.  To do this, create a new simulation or edit an existing one.  In the `Edit Simulation` window, go to the `Simulation options` tab.  Finally, click `Add Extension` and select ORBrake under the `Flight` tab.  The plugin settings window will open.  Click `close` once you are done.  You can then execute the simulation. 
