@@ -1,14 +1,34 @@
-<project name="ORBrake" basedir="." default="build">
+<project name="ORBrake" basedir="." default="run">
 
+	<description>
+		Builds the plugin.
+	</description>
+	
     <property name="src.dir" value="${basedir}/src"/>
     <property name="build.dir" value="${basedir}/build"/>
 	<property environment="env"/>
 
-    <target name="build">
+	<target name="build" description="Builds the plugin.">
+		<echo>Building...</echo>
         <mkdir dir="${build.dir}"/>
         <javac debug="true" srcdir="${src.dir}" destdir="${build.dir}" classpath="OpenRocket-15.03.jar" includeantruntime="false" source="1.8" target="1.8"/>
-    	<jar destfile="${env.APPDATA}/OpenRocket/Plugins/ORBrake.jar" basedir="${build.dir}"/>
-    	<java jar="OpenRocket-15.03.jar" fork="true"/>
+		<echo>Done</echo>
     </target>
+	
+    <target name="run" depends="build" description="Builds the plugin, exports a jar to the OpenRocket Plugin folder, and launches OpenRocket">
+		<echo>Exporting JAR to Plugins...</echo>
+    	<jar destfile="${env.APPDATA}/OpenRocket/Plugins/ORBrake.jar" basedir="${build.dir}"/>
+		<echo>Done</echo>
+		<echo>Running OpenRocket...</echo>
+    	<java jar="OpenRocket-15.03.jar" fork="true"/>
+		<echo>Done</echo>
+    </target>
+	
+	<target name="export" depends="build" description="Builds the plugin, exports a jar to the current folder.">
+		<echo>Exporting JAR...</echo>
+		<jar destfile="ORBrake.jar" basedir="${build.dir}"/>
+		<echo>Done</echo>
+    </target>
+
 
 </project>
