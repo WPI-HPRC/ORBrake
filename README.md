@@ -1,14 +1,24 @@
 # ORBrake
 An open rocket extension for controllable air brakes.
 
+## Installing
+1. To install ORBrake, click on `Releases` on the right.  
+1. Under the most recent version, click on `Assets` and then download `ORBrake.jar`.  
+1. Save `ORBrake.jar` to your OpenRocket Plugin folder.
+    * On Windows, the OpenRocket Plugin folder is likely `C:\Users\[USER]\AppData\Roaming\OpenRocket\Plugins`.  
+    * If this doesn't work, you can find the OpenRocket folder within your Application Data folder.  To get to the AppData folder, press `Windows + R` then type `%appdata%` and hit enter before navigating to `OpenRocket\Plugins`.
+
+Alternativley can also build it yourself from the source code by following the Contributing section.  
+
 ## Using the Plugin
-To use ORBrake, it must be enabled on your simulation.  To do this, create a new simulation or edit an existing one.  In the `Edit Simulation` window, go to the `Simulation options` tab.  Finally, click `Add Extension` and select ORBrake under the `Flight` tab.
+To use ORBrake, it must be enabled on your simulation.  To do this, create a new simulation or edit an existing one.  In the `Edit Simulation` window, go to the `Simulation options` tab.  Finally, click `Add Extension` and select ORBrake under the `Flight` tab.  The plugin settings window will open.  Click `close` once you are done.  You can then execute the simulation. 
 
 ## Contributing
+ORBrake is written in Java.  This section explains what dependencies are required to build the project as well as how to configure the development environment.
 ### Dependencies
 1. [jdk 8](https://adoptopenjdk.net/): OpenRocket requires Java 8.  More recent versions are incompatible.  To compile code, jdk 8 is required.
 1. [Apache Ant](https://mkyong.com/ant/how-to-install-apache-ant-on-windows/): Ant is used to automate the build process.
-1. Eclipse *[Recomended]*: For convenience, you can use the Sloeber Eclipse that is used for HPRC's embedded firmware programs.   
+1. [Eclipse](https://github.com/WPIRoboticsEngineering/ESP32ArduinoEclipseInstaller) *[Recomended]*: While not explicetly required for this project, you can use the Sloeber Eclipse that is used for HPRC's embedded firmware programs.  There is no reason you couldn't use other IDEs like IDEA or VIM (depending on how much of a hacker you are) but the environment setup will be up to you.
 1. OpenRocket 15.03: For obvious reasons, this OpenRocket plugin requires OpenRocket to run.  Version 15.03, the most recent release, is included in this repo.
 
 ### Eclipse Setup
