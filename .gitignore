@@ -25,6 +25,8 @@ hs_err_pid*
 .project
 .classpath
 
+!OpenRocket-15.03.jar
+
 /bin/
 /build/
 /.vscode/
