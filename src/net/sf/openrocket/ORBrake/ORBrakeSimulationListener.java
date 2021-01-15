@@ -9,10 +9,10 @@ import net.sf.openrocket.aerodynamics.FlightConditions;
 
 public class ORBrakeSimulationListener extends AbstractSimulationListener {
 
-    private double velocity;
-    private double altitude;
+    double velocity;
+    double altitude;
     
-    private double surfConst[][] = {	// Surface constants for presimulated airbrake extensions.
+    private static final double surfConst[][] = {	// Surface constants for presimulated airbrake extensions.
     		{-0.000000000, 0.000000000, -0.000000000, 0.0000000000, 0.000000000},	// 0  %
     		{-0.046526224, 0.000020669, -0.000299962, -0.0000001251, 0.000010806},	// 20 %
     		{-0.093052324, 0.000041339, -0.000599922, -0.0000002503, 0.000021611},	// 40 %
@@ -52,17 +52,17 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
      */
     {
         // if (status.getSimulationTime() )
-        return thrust + AirbrakeForce();
+        return thrust + airbrakeForce();
     }
     
-    private double AirbrakeForce()
+    double airbrakeForce()
     {
     	double requiredDrag = 3;
         return requiredDrag;
     	//return drag_coef * density * Math.pow(vel, 2) / 2;
     }
     
-    private double ExtensionFromDrag(double requiredDrag)
+    double extensionFromDrag(double requiredDrag)
     /**
      * Computes the required extension to achieve a required drag.
      * 
@@ -74,7 +74,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 
     	// Compute drag for each known extension.
     	IntStream.range(0, 5).forEachOrdered(n -> {
-    	    drag[n] = this.DragSurface(n);
+    	    drag[n] = this.dragSurface(n);
     	});
     	
     	// Interpolate to find desired extension
@@ -98,7 +98,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	return extension;
     }
     
-    private double DragSurface(int extNum)
+    double dragSurface(int extNum)
     /**
      * Finds the drag force at one of the 6 drag surfaces given the current 
      * velocity and altitude.
