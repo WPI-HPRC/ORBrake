@@ -62,6 +62,61 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	//return drag_coef * density * Math.pow(vel, 2) / 2;
     }
     
+    // START OF PSEUDOCODE
+
+    // Define variables
+
+    	// Error function variables
+    	double err; //error
+    	double SP; //setpoint
+    	double measure; //measurement 
+
+    	// PID controller gain constants
+    	double Kp;
+    	double Ki;
+    	double Kd;
+
+    	// Low pass filter time constant
+    	double tau;
+
+    	// Output limits
+    	double min;
+    	double max;
+
+    	// Sample time in seconds
+    	double T;
+
+    	double prop; //proportional
+
+    	// Memory
+    	double inte; //integral
+    	double prev_err; //previous error
+    	double diff; //differential
+    	double prev_measure; //previous measurement
+
+    	// Output
+    	double out;
+
+    public PID_initial(variables)
+    {
+    	inte = 0;
+    	prev_err = 0;
+    	diff = 0;
+    	prev_measure = 0;
+    	out = 0;
+    }
+    public PID_update(variables)
+    {	
+    	err = setpoint - measure;
+    	prop = Kp*err;
+    	inte = 0.5*Ki*T*(err+prev_err) + inte;
+    	// [clamp integrator here]
+    	diff = ( 2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
+    	out = prop + inte + diff;
+    }
+    
+    // END OF PSEUDOCODE
+    
     double extensionFromDrag(double requiredDrag)
     /**
      * Computes the required extension to achieve a required drag.
