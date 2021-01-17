@@ -96,6 +96,8 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	prev_measure = 0;
     	
     	out = 0;
+    	
+    	cont = 1;
     }
     
     double PID_update(parameters, double SP, double measure)
@@ -146,6 +148,19 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	prev_measure = measure;
     	
     	return out;
+    }
+    
+    PID_initial(parameters);
+    while (cont = true)
+    {
+    	measure = out;
+    	PID_update(parameters, SP, measure);
+    	
+        if (SP = out) {
+        	cont = 0;
+        } else {
+        	cont = 1;
+        }
     }
     
     // END OF PID CONTROLLER CODE
