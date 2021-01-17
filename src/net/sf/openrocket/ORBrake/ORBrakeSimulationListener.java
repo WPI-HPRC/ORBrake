@@ -66,7 +66,9 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     
     void struct()
     {
-        double Kp; //proportional gain constant
+        // Input parameters
+    	
+    	double Kp; //proportional gain constant
         double Ki; //integral gain constant
         double Kd; //derivative gain constant
 
@@ -80,6 +82,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
         double T; //sample time in sec
         
         // Memory
+        
         double inte; //integral term
         double prev_err; //previous error
         double diff; //differential term
