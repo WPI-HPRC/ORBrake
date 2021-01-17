@@ -62,60 +62,93 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	//return drag_coef * density * Math.pow(vel, 2) / 2;
     }
     
-    // START OF PSEUDOCODE
+    // PID CONTROLLER
+    
+    void struct()
+    {
+        double Kp; //proportional gain constant
+        double Ki; //integral gain constant
+        double Kd; //derivative gain constant
 
-    // Define variables
+        double tau; //low pass filter time constant
 
-    	// Error function variables
-    	double err; //error
-    	double SP; //setpoint
-    	double measure; //measurement 
+        double min; //output min limit
+        double max; //output max limit
+    	double min_inte; //integral min limit
+    	double max_inte; //integral max limit
+    	
+        double T; //sample time in sec
+        
+        // Memory
+        double inte; //integral term
+        double prev_err; //previous error
+        double diff; //differential term
+        double prev_measure; //previous measurement
 
-    	// PID controller gain constants
-    	double Kp;
-    	double Ki;
-    	double Kd;
-
-    	// Low pass filter time constant
-    	double tau;
-
-    	// Output limits
-    	double min;
-    	double max;
-
-    	// Sample time in seconds
-    	double T;
-
-    	double prop; //proportional
-
-    	// Memory
-    	double inte; //integral
-    	double prev_err; //previous error
-    	double diff; //differential
-    	double prev_measure; //previous measurement
-
-    	// Output
-    	double out;
-
-    public PID_initial(variables)
+        double out; //output
+    } parameters
+    
+    void PID_initial(parameters)
     {
     	inte = 0;
     	prev_err = 0;
     	diff = 0;
     	prev_measure = 0;
+    	
     	out = 0;
     }
-    public PID_update(variables)
-    {	
-    	err = setpoint - measure;
-    	prop = Kp*err;
+    
+    double PID_update(parameters, double SP, double measure)
+    {
+    	// Error function
+    	double err = SP - measure;
+    	/**
+    	 * SP = setpoint, desired angle of airbrake extension
+    	 * measure = actual measurement, current angle of airbrake extension
+    	 */
+    	
+    	// Proportional Term
+    	double prop = Kp*err;
+    	
+    	// Integral Term
     	inte = 0.5*Ki*T*(err+prev_err) + inte;
-    	// [clamp integrator here]
-    	diff = ( 2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
+    	
+    	// Anti-wind up (static integral clamping)
+//    	if (max > prop) {
+//    		max_inte = max - prop;
+//    	} else {
+//    		max_inte = 0;
+//    	}
+//    	if (min < prop) {
+//    		min_inte = min - prop;
+//    	} else {
+//    		min_inte = 0;
+//    	}
+    	if (inte > max_inte) {
+    		inte = max_inte;
+    	} else if (inte < min_inte) {
+    		inte = min_inte;
+    	}
+    	
+    	// Differential Term
+    	diff = -( 2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
+    	
+    	// Output 
     	out = prop + inte + diff;
+    	if (out > max) {
+    		out = max;
+    	} else if (out < min) {
+    		out = min;
+    	}
+    	
+    	// Update memory
+    	prev_err = error;
+    	prev_measure = measure;
+    	
+    	return out;
     }
     
-    // END OF PSEUDOCODE
+    // END OF PID CONTROLLER CODE
     
     double extensionFromDrag(double requiredDrag)
     /**
