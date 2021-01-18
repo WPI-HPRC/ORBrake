@@ -64,35 +64,40 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     
     // PID CONTROLLER
     
-    void struct()
-    {
-        // Input parameters
-    	
-    	double Kp; //proportional gain constant
-        double Ki; //integral gain constant
-        double Kd; //derivative gain constant
-
-        double tau; //low pass filter time constant
-
-        double min; //output min limit
-        double max; //output max limit
-    	double min_inte; //integral min limit
-    	double max_inte; //integral max limit
-    	
-        double T; //sample time in sec
-        
-        // Memory
-        
-        double inte; //integral term
-        double prev_err; //previous error
-        double diff; //differential term
-        double prev_measure; //previous measurement
-
-        double out; //output
-    } parameters
+    // Calculated parameters
+	
+    double err; //error
+    double SP; //setpoint (desired altitude)
+    double measure; //actual measurement (predicted altitude)
+    double requiredDrag; //required drag
     
-    void PID_initial(parameters)
+    // Input parameters
+    
+	double Kp = 1; //proportional gain constant
+    double Ki = 1; //integral gain constant
+    double Kd = 1; //derivative gain constant
+
+    double tau = 1; //low pass filter time constant
+
+    double min = 1; //output min limit
+    double max = 5; //output max limit
+	double min_inte = 1; //integral min limit
+	double max_inte = 5; //integral max limit
+	
+    double T = 1; //sample time in sec
+    
+    // Memory variables
+    
+    double inte; //integral term
+    double prev_err; //previous error
+    double diff; //differential term
+    double prev_measure; //previous measurement
+
+    double out; //output
+    
+    double PID_controller()
     {
+    	// Initial conditions
     	inte = 0;
     	prev_err = 0;
     	diff = 0;
@@ -100,70 +105,54 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	
     	out = 0;
     	
-    	cont = 1;
-    }
-    
-    double PID_update(parameters, double SP, double measure)
-    {
-    	// Error function
-    	double err = SP - measure;
-    	/**
-    	 * SP = setpoint, desired angle of airbrake extension
-    	 * measure = actual measurement, current angle of airbrake extension
-    	 */
-    	
-    	// Proportional Term
-    	double prop = Kp*err;
-    	
-    	// Integral Term
-    	inte = 0.5*Ki*T*(err+prev_err) + inte;
-    	
-    	// Anti-wind up (static integral clamping)
-//    	if (max > prop) {
-//    		max_inte = max - prop;
-//    	} else {
-//    		max_inte = 0;
-//    	}
-//    	if (min < prop) {
-//    		min_inte = min - prop;
-//    	} else {
-//    		min_inte = 0;
-//    	}
-    	if (inte > max_inte) {
-    		inte = max_inte;
-    	} else if (inte < min_inte) {
-    		inte = min_inte;
-    	}
-    	
-    	// Differential Term
-    	diff = -( 2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
-    	
-    	// Output 
-    	out = prop + inte + diff;
-    	if (out > max) {
-    		out = max;
-    	} else if (out < min) {
-    		out = min;
-    	}
-    	
-    	// Update memory
-    	prev_err = error;
-    	prev_measure = measure;
-    	
-    	return out;
-    }
-    
-    PID_initial(parameters);
-    while (cont = true)
-    {
-    	measure = out;
-    	PID_update(parameters, SP, measure);
-    	
-        if (SP = out) {
-        	cont = 0;
-        } else {
-        	cont = 1;
-        }
+    	while (SP - prev_measure > 0.01)
+    	{
+	    	measure = out;
+    		
+    		// Error function
+	    	double err = SP - measure;
+	    	
+	    	// Proportional term
+	    	double prop = Kp*err;
+	    	
+	    	// Integral term
+	    	inte = 0.5*Ki*T*(err+prev_err) + inte;
+	    	
+	    	// Anti-wind up (static integral clamping)
+//	    	if (max > prop) {
+//	    		max_inte = max - prop;
+//	    	} else {
+//	    		max_inte = 0;
+//	    	}
+//	    	if (min < prop) {
+//	    		min_inte = min - prop;
+//	    	} else {
+//	    		min_inte = 0;
+//	    	}
+	    	if (inte > max_inte) {
+	    		inte = max_inte;
+	    	} else if (inte < min_inte) {
+	    		inte = min_inte;
+	    	}
+	    	
+	    	// Differential term
+	    	diff = -( 2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
+	    	
+	    	// Output 
+	    	out = prop + inte + diff;
+	    	if (out > max) {
+	    		out = max;
+	    	} else if (out < min) {
+	    		out = min;
+	    	}
+	    	
+	    	// Update memory
+	    	prev_err = err;
+	    	prev_measure = measure;
+	    	
+	    	requiredDrag = ; //equation with input of prev_measure (predicted altitude) to get output drag
+	    	return requiredDrag;
+	    }
     }
     
     // END OF PID CONTROLLER CODE
