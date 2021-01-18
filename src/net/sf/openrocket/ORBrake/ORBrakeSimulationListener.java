@@ -11,6 +11,24 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 
     double velocity;
     double altitude;
+        
+    // Input parameters for PID controller
+	double Kp = 1; //proportional gain constant
+    double Ki = 1; //integral gain constant
+    double Kd = 1; //derivative gain constant
+    double tau = 1; //low pass filter time constant
+    double min = 1; //output min limit
+    double max = 5; //output max limit
+	double min_inte = 1; //integral min limit
+	double max_inte = 5; //integral max limit
+    double T = 1; //sample time in sec
+    
+    // Memory variables for PID controller
+    double inte; //integral term
+    double prev_err; //previous error
+    double diff; //differential term
+    double prev_measure; //previous measurement
+    double out; //output
     
     private static final double surfConst[][] = {	// Surface constants for presimulated airbrake extensions.
     		{-0.000000000, 0.000000000, -0.000000000, 0.0000000000, 0.000000000},	// 0  %
@@ -60,6 +78,69 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	double requiredDrag = 3;
         return requiredDrag;
     	//return drag_coef * density * Math.pow(vel, 2) / 2;
+    }
+    
+    double requiredDrag(double SP, double measure) //PID controller to get updated drag coefficient
+    /**
+     * SP = desired altitude setpoint
+     * measure = actual measured predicted altitude
+     */
+    {
+    	// Initial conditions
+    	inte = 0;
+    	prev_err = 0;
+    	diff = 0;
+    	prev_measure = 0;
+    	
+    	out = 0;
+    	
+    	while (SP - prev_measure > 0.01)
+    	{
+	    	measure = out;
+    		
+    		// Error function
+	    	double err = SP - measure;
+	    	
+	    	// Proportional term
+	    	double prop = Kp*err;
+	    	
+	    	// Integral term
+	    	inte = 0.5*Ki*T*(err+prev_err) + inte;
+	    	
+	    	// Anti-wind up (static integral clamping)
+//	    	if (max > prop) {
+//	    		max_inte = max - prop;
+//	    	} else {
+//	    		max_inte = 0;
+//	    	}
+//	    	if (min < prop) {
+//	    		min_inte = min - prop;
+//	    	} else {
+//	    		min_inte = 0;
+//	    	}
+	    	if (inte > max_inte) {
+	    		inte = max_inte;
+	    	} else if (inte < min_inte) {
+	    		inte = min_inte;
+	    	}
+	    	
+	    	// Differential term
+	    	diff = -( 2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
+	    	
+	    	// Output 
+	    	out = prop + inte + diff;
+	    	if (out > max) {
+	    		out = max;
+	    	} else if (out < min) {
+	    		out = min;
+	    	}
+	    	
+	    	// Update memory
+	    	prev_err = err;
+	    	prev_measure = measure;
+	    	
+	    	return ; //required drag equation with input of prev_measure (predicted altitude)
+	    }
     }
     
     double extensionFromDrag(double requiredDrag)
