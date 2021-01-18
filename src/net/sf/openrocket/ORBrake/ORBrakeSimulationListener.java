@@ -11,6 +11,24 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 
     double velocity;
     double altitude;
+        
+    // Input parameters for PID controller
+	double Kp = 1; //proportional gain constant
+    double Ki = 1; //integral gain constant
+    double Kd = 1; //derivative gain constant
+    double tau = 1; //low pass filter time constant
+    double min = 1; //output min limit
+    double max = 5; //output max limit
+	double min_inte = 1; //integral min limit
+	double max_inte = 5; //integral max limit
+    double T = 1; //sample time in sec
+    
+    // Memory variables for PID controller
+    double inte; //integral term
+    double prev_err; //previous error
+    double diff; //differential term
+    double prev_measure; //previous measurement
+    double out; //output
     
     private static final double surfConst[][] = {	// Surface constants for presimulated airbrake extensions.
     		{-0.000000000, 0.000000000, -0.000000000, 0.0000000000, 0.000000000},	// 0  %
@@ -62,40 +80,11 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	//return drag_coef * density * Math.pow(vel, 2) / 2;
     }
     
-    // PID CONTROLLER
-    
-    // Calculated parameters
-	
-    double err; //error
-    double SP; //setpoint (desired altitude)
-    double measure; //actual measurement (predicted altitude)
-    double requiredDrag; //required drag
-    
-    // Input parameters
-    
-	double Kp = 1; //proportional gain constant
-    double Ki = 1; //integral gain constant
-    double Kd = 1; //derivative gain constant
-
-    double tau = 1; //low pass filter time constant
-
-    double min = 1; //output min limit
-    double max = 5; //output max limit
-	double min_inte = 1; //integral min limit
-	double max_inte = 5; //integral max limit
-	
-    double T = 1; //sample time in sec
-    
-    // Memory variables
-    
-    double inte; //integral term
-    double prev_err; //previous error
-    double diff; //differential term
-    double prev_measure; //previous measurement
-
-    double out; //output
-    
-    double PID_controller()
+    double requiredDrag(double SP, double measure) //PID controller to get updated drag coefficient
+    /**
+     * SP = desired altitude setpoint
+     * measure = actual measured predicted altitude
+     */
     {
     	// Initial conditions
     	inte = 0;
@@ -150,12 +139,9 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	prev_err = err;
 	    	prev_measure = measure;
 	    	
-	    	requiredDrag = ; //equation with input of prev_measure (predicted altitude) to get output drag
-	    	return requiredDrag;
+	    	return ; //required drag equation with input of prev_measure (predicted altitude)
 	    }
     }
-    
-    // END OF PID CONTROLLER CODE
     
     double extensionFromDrag(double requiredDrag)
     /**
