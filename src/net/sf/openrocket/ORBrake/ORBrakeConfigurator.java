@@ -23,7 +23,14 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 	
 	@Override
 	protected JComponent getConfigurationComponent(ORBrake extension, Simulation simulation, JPanel panel) {
-		// panel.add(new JLabel("Thrust multiplier:"));
+		 panel.add(new JLabel("Setpoint:"));
+		 
+		 panel.add(new JLabel("Proportional Gain:"));
+
+		 panel.add(new JLabel("Integral Gain:"));
+
+		 panel.add(new JLabel("Differential Gain:"));
+		 
 		
 		// DoubleModel m = new DoubleModel(extension, "Multiplier", UnitGroup.UNITS_RELATIVE, 0);
 		
