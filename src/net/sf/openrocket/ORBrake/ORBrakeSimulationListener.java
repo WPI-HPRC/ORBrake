@@ -12,7 +12,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     double velocity;
     double altitude;
     double thrust;
-    double setpoint;
+    double setpoint = 4550; //desired altitude in feet
         
     // Input parameters for PID controller
 	double Kp = 1; //proportional gain constant
@@ -82,8 +82,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	} else if (requiredDrag < 0) {
     		requiredDrag = 0;
     	}
-        return requiredDrag;
-    	//return drag_coef * density * Math.pow(vel, 2) / 2;
+        return -requiredDrag;
     }
     
     double requiredDrag(double SP, double measure) //PID controller to get updated drag coefficient
