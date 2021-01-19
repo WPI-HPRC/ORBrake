@@ -129,7 +129,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	}
 	    	
 	    	// Differential term
-	    	diff = -( 2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
+	    	diff = ( -2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
 	    	
 	    	// Output 
 	    	out = prop + inte + diff;
