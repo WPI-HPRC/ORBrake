@@ -23,8 +23,8 @@ class ORBrakeTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		listener.velocity = 300;
-		listener.altitude = 3000;
+//		listener.velocity = 300;
+//		listener.altitude = 3000;
 	}
 
 //	@AfterEach
@@ -33,7 +33,7 @@ class ORBrakeTest {
 
 	@Test
 	void dragSurfaceTest() {
-		double drag = listener.dragSurface(5);
+		double drag = listener.dragSurface(5. 300. 3000);
 		System.out.println(drag);
 		assertEquals(drag, 4.8284, .0001);
 	}

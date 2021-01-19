@@ -9,15 +9,15 @@ import net.sf.openrocket.aerodynamics.FlightConditions;
 
 public class ORBrakeSimulationListener extends AbstractSimulationListener {
 
-    double velocity;
-    double altitude;
-    double thrust;
-    double setpoint = 4550; //desired altitude in feet
+//    double velocity;
+//    double altitude;
+//    double thrust;
+    double setpoint = 4550/3.281; //desired altitude in feet
         
     // Input parameters for PID controller
 	double Kp = 1; //proportional gain constant
-    double Ki = 1; //integral gain constant
-    double Kd = 1; //derivative gain constant
+    double Ki = 0; //integral gain constant
+    double Kd = 0; //derivative gain constant
     double tau = 1; //low pass filter time constant
 //	double min_inte = 1; //integral min limit
 //	double max_inte = 5; //integral max limit
@@ -31,11 +31,11 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     
     private static final double surfConst[][] = {	// Surface constants for presimulated airbrake extensions.
     		{-0.000000000, 0.000000000, -0.000000000, 0.0000000000, 0.000000000},	// 0  %
-    		{-0.023136854, 0.000010395, 0.000071445, -0.0000000862, 0.000008669},	// 20 %
-    		{-0.041211681, 0.000017555, 0.000565077, -0.0000002520, 0.000017995},	// 40 %
-    		{-0.085142430, 0.000038009, 0.000316569, -0.0000003705, 0.000029817},	// 60 %    		
-    		{-0.152819731, 0.000068195, 0.000074012, -0.0000004884, 0.000043697},	// 80 %
-    		{-0.261060050, 0.000115821, -0.000232887, -0.0000007869, 0.000061334}	// 100%
+    		{-0.102912726, -0.000151700, 0.001042665, 0.0000041259, 0.000415087},	// 20 %
+    		{-0.183309557, -0.000256191, 0.008246675, 0.0000120688, 0.000861634},	// 40 %
+    		{-0.378713528, -0.000554695, 0.004619966, 0.0000177406, 0.001427697},	// 60 %    		
+    		{-0.679742164, -0.000995227, 0.001080119, 0.0000233844, 0.002092339},	// 80 %
+    		{-1.161195104, -0.001690272, -0.003398721, 0.0000376809, 0.002936851}	// 100%
     };
 
 	public ORBrakeSimulationListener() {
@@ -53,7 +53,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
      * @return	null.
      */
     {
-        velocity = conditions.getVelocity();
+//        velocity = conditions.getVelocity();
         return null; 
     }
 
@@ -69,23 +69,25 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
      */
     {
         // if (status.getSimulationTime() )
-    	this.thrust = thrust;
-    	this.altitude = status.getRocketPosition().z;
-        return thrust + airbrakeForce();
+//    	status.getRocketVelocity().normalize();
+//    	this.thrust = thrust;
+//    	this.altitude = status.getRocketPosition().z;
+        return thrust + airbrakeForce(status, thrust);
     }
     
-    double airbrakeForce()
+    double airbrakeForce(SimulationStatus status, double thrust)
     {
-    	double requiredDrag = requiredDrag(setpoint, altitude);
-    	if (requiredDrag > dragSurface(5)) {
-    		requiredDrag = dragSurface(5);
+    	double requiredDrag = requiredDrag(setpoint, status, thrust);
+    	double surf = dragSurface(5, status.getRocketPosition().z, status.getRocketVelocity().length());
+    	if (requiredDrag > surf) {
+    		requiredDrag = surf;
     	} else if (requiredDrag < 0) {
     		requiredDrag = 0;
     	}
         return -requiredDrag;
     }
     
-    double requiredDrag(double SP, double measure) //PID controller to get updated drag coefficient
+    double requiredDrag(double SP,SimulationStatus status, double thrust) //PID controller to get updated drag coefficient
     /**
      * SP = desired altitude setpoint
      * measure = actual altitude
@@ -93,6 +95,8 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     {
     	// Initial conditions  	
     	double out = 0;
+    	double measure = status.getRocketPosition().z;
+    	double velocity = status.getRocketVelocity().length();
     	
     	if (thrust == 0)
     	{    		
@@ -108,8 +112,8 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	// Anti-wind up (dynamic integral clamping)
 	    	double min_inte; //integral min limit
 	    	double max_inte; //integral max limit
-	    	if (dragSurface(5) > prop) {
-	    		max_inte = dragSurface(5) - prop;
+	    	if (dragSurface(5, measure, velocity) > prop) {
+	    		max_inte = dragSurface(5, measure, velocity) - prop;
 	    	} else {
 	    		max_inte = 0;
 	    	}
@@ -138,43 +142,43 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	return out; //required drag
     }
     
-    double extensionFromDrag(double requiredDrag)
-    /**
-     * Computes the required extension to achieve a required drag.
-     * 
-     * @param requiredDrag	The desired drag from the control system.
-     * @return	The percentage deployment that will produce that drag.
-     */
-    {
-    	double[] drag = new double[6];
-
-    	// Compute drag for each known extension.
-    	IntStream.range(0, 5).forEachOrdered(n -> {
-    	    drag[n] = this.dragSurface(n);
-    	});
-    	
-    	// Interpolate to find desired extension
-    	double extension = 0;
-    	double term;
-    	
-    	for (int i = 0; i < 5; ++i)
-    	{
-    		term = i;
-    		for (int j = 0; j < 5; ++j)
-    		{
-        		if(j != i)
-        		{
-        			term *= (requiredDrag - drag[j]) / (drag[i] - drag[j]);
-        		}
-        	};
-        	
-        	extension += term;
-    	};
-    	extension *= 20;
-    	return extension;
-    }
+//    double extensionFromDrag(double requiredDrag)
+//    /**
+//     * Computes the required extension to achieve a required drag.
+//     * 
+//     * @param requiredDrag	The desired drag from the control system.
+//     * @return	The percentage deployment that will produce that drag.
+//     */
+//    {
+//    	double[] drag = new double[6];
+//
+//    	// Compute drag for each known extension.
+//    	IntStream.range(0, 5).forEachOrdered(n -> {
+//    	    drag[n] = this.dragSurface(n);
+//    	});
+//    	
+//    	// Interpolate to find desired extension
+//    	double extension = 0;
+//    	double term;
+//    	
+//    	for (int i = 0; i < 5; ++i)
+//    	{
+//    		term = i;
+//    		for (int j = 0; j < 5; ++j)
+//    		{
+//        		if(j != i)
+//        		{
+//        			term *= (requiredDrag - drag[j]) / (drag[i] - drag[j]);
+//        		}
+//        	};
+//        	
+//        	extension += term;
+//    	};
+//    	extension *= 20;
+//    	return extension;
+//    }
     
-    double dragSurface(int extNum)
+    double dragSurface(int extNum, double altitude, double velocity)
     /**
      * Finds the drag force at one of the 6 drag surfaces given the current 
      * velocity and altitude.
