@@ -33,7 +33,7 @@ class ORBrakeTest {
 
 	@Test
 	void dragSurfaceTest() {
-		double drag = listener.dragSurface(5. 300. 3000);
+		double drag = listener.dragSurface(5, 300, 3000);
 		System.out.println(drag);
 		assertEquals(drag, 4.8284, .0001);
 	}
