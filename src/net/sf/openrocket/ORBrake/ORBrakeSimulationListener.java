@@ -11,24 +11,23 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 
     double velocity;
     double altitude;
+    double thrust;
+    double setpoint;
         
     // Input parameters for PID controller
 	double Kp = 1; //proportional gain constant
     double Ki = 1; //integral gain constant
     double Kd = 1; //derivative gain constant
     double tau = 1; //low pass filter time constant
-    double min = 1; //output min limit
-    double max = 5; //output max limit
-	double min_inte = 1; //integral min limit
-	double max_inte = 5; //integral max limit
+//	double min_inte = 1; //integral min limit
+//	double max_inte = 5; //integral max limit
     double T = 1; //sample time in sec
     
     // Memory variables for PID controller
-    double inte; //integral term
-    double prev_err; //previous error
-    double diff; //differential term
-    double prev_measure; //previous measurement
-    double out; //output
+    double inte = 0; //integral term
+    double prev_err = 0; //previous error
+    double diff = 0; //differential term
+    double prev_measure = 0; //previous measurement
     
     private static final double surfConst[][] = {	// Surface constants for presimulated airbrake extensions.
     		{-0.000000000, 0.000000000, -0.000000000, 0.0000000000, 0.000000000},	// 0  %
@@ -70,12 +69,19 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
      */
     {
         // if (status.getSimulationTime() )
+    	this.thrust = thrust;
+    	this.altitude = status.getRocketPosition().z;
         return thrust + airbrakeForce();
     }
     
     double airbrakeForce()
     {
-    	double requiredDrag = 3;
+    	double requiredDrag = requiredDrag(setpoint, altitude);
+    	if (requiredDrag > dragSurface(5)) {
+    		requiredDrag = dragSurface(5);
+    	} else if (requiredDrag < 0) {
+    		requiredDrag = 0;
+    	}
         return requiredDrag;
     	//return drag_coef * density * Math.pow(vel, 2) / 2;
     }
@@ -83,21 +89,14 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     double requiredDrag(double SP, double measure) //PID controller to get updated drag coefficient
     /**
      * SP = desired altitude setpoint
-     * measure = actual measured predicted altitude
+     * measure = actual altitude
      */
     {
-    	// Initial conditions
-    	inte = 0;
-    	prev_err = 0;
-    	diff = 0;
-    	prev_measure = 0;
+    	// Initial conditions  	
+    	double out = 0;
     	
-    	out = 0;
-    	
-    	while (SP - prev_measure > 0.01)
-    	{
-	    	measure = out;
-    		
+    	if (thrust == 0)
+    	{    		
     		// Error function
 	    	double err = SP - measure;
 	    	
@@ -105,19 +104,21 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	double prop = Kp*err;
 	    	
 	    	// Integral term
-	    	inte = 0.5*Ki*T*(err+prev_err) + inte;
+	    	inte += 0.5*Ki*T*(err+prev_err);
 	    	
-	    	// Anti-wind up (static integral clamping)
-//	    	if (max > prop) {
-//	    		max_inte = max - prop;
-//	    	} else {
-//	    		max_inte = 0;
-//	    	}
-//	    	if (min < prop) {
-//	    		min_inte = min - prop;
-//	    	} else {
-//	    		min_inte = 0;
-//	    	}
+	    	// Anti-wind up (dynamic integral clamping)
+	    	double min_inte; //integral min limit
+	    	double max_inte; //integral max limit
+	    	if (dragSurface(5) > prop) {
+	    		max_inte = dragSurface(5) - prop;
+	    	} else {
+	    		max_inte = 0;
+	    	}
+	    	if (0 < prop) {
+	    		min_inte = 0 - prop;
+	    	} else {
+	    		min_inte = 0;
+	    	}
 	    	if (inte > max_inte) {
 	    		inte = max_inte;
 	    	} else if (inte < min_inte) {
@@ -129,18 +130,13 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	
 	    	// Output 
 	    	out = prop + inte + diff;
-	    	if (out > max) {
-	    		out = max;
-	    	} else if (out < min) {
-	    		out = min;
-	    	}
 	    	
 	    	// Update memory
 	    	prev_err = err;
 	    	prev_measure = measure;
-	    	
-	    	return ; //required drag equation with input of prev_measure (predicted altitude)
 	    }
+    	
+    	return measure; //required drag
     }
     
     double extensionFromDrag(double requiredDrag)
