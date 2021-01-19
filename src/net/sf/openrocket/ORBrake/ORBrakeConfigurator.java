@@ -23,26 +23,61 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 	
 	@Override
 	protected JComponent getConfigurationComponent(ORBrake extension, Simulation simulation, JPanel panel) {
-		 panel.add(new JLabel("Setpoint:"));
-		 
-		 panel.add(new JLabel("Proportional Gain:"));
+		
+		panel.add(new JLabel("Setpoint:"));
+		DoubleModel S = new DoubleModel(extension, "setpoint", UnitGroup.UNITS_RELATIVE, 0);
+		
+		JSpinner spinS = new JSpinner(S.getSpinnerModel());
+		spinS.setEditor(new SpinnerEditor(spinS));
+		panel.add(spinS, "w 65lp!");
+		
+		UnitSelector unitS = new UnitSelector(S);
+		panel.add(unitS, "w 25");
+			
+		BasicSlider sliderS = new BasicSlider(S.getSliderModel(0, 100));
+		panel.add(sliderS, "w 75lp, wrap");
+		
+		
+		panel.add(new JLabel("Proportional Gain:"));
+		DoubleModel P = new DoubleModel(extension, "Kp", UnitGroup.UNITS_RELATIVE, 0);
+		
+		JSpinner spinP = new JSpinner(P.getSpinnerModel());
+		spinP.setEditor(new SpinnerEditor(spinP));
+		panel.add(spinP, "w 65lp!");
+		
+		UnitSelector unitP = new UnitSelector(P);
+		panel.add(unitP, "w 25");
+		
+		BasicSlider sliderP = new BasicSlider(P.getSliderModel(0, 10));
+		panel.add(sliderP, "w 75lp, wrap");
+		
 
-		 panel.add(new JLabel("Integral Gain:"));
+		panel.add(new JLabel("Integral Gain:"));
+		DoubleModel I = new DoubleModel(extension, "Ki", UnitGroup.UNITS_RELATIVE, 0);
+		
+		JSpinner spinI = new JSpinner(I.getSpinnerModel());
+		spinI.setEditor(new SpinnerEditor(spinI));
+		panel.add(spinI, "w 65lp!");
+		
+		UnitSelector unitI = new UnitSelector(I);
+		panel.add(unitI, "w 25");
+		
+		BasicSlider sliderI = new BasicSlider(I.getSliderModel(0, 5));
+		panel.add(sliderI, "w 75lp, wrap");
 
-		 panel.add(new JLabel("Differential Gain:"));
-		 
 		
-		// DoubleModel m = new DoubleModel(extension, "Multiplier", UnitGroup.UNITS_RELATIVE, 0);
+		panel.add(new JLabel("Differential Gain:"));
+		DoubleModel D = new DoubleModel(extension, "Kd", UnitGroup.UNITS_RELATIVE, 0);
 		
-		// JSpinner spin = new JSpinner(m.getSpinnerModel());
-		// spin.setEditor(new SpinnerEditor(spin));
-		// panel.add(spin, "w 65lp!");
+		JSpinner spinD = new JSpinner(D.getSpinnerModel());
+		spinD.setEditor(new SpinnerEditor(spinD));
+		panel.add(spinD, "w 65lp!");
 		
-		// UnitSelector unit = new UnitSelector(m);
-		// panel.add(unit, "w 25");
+		UnitSelector unitD = new UnitSelector(D);
+		panel.add(unitD, "w 25");
 		
-		// BasicSlider slider = new BasicSlider(m.getSliderModel(0, 3));
-		// panel.add(slider, "w 75lp, wrap");
+		BasicSlider sliderD = new BasicSlider(D.getSliderModel(0, 3));
+		panel.add(sliderD, "w 75lp, wrap");
 		
 		return panel;
 	}
