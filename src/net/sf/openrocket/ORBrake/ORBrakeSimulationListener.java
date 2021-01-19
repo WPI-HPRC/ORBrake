@@ -136,7 +136,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	prev_measure = measure;
 	    }
     	
-    	return measure; //required drag
+    	return out; //required drag
     }
     
     double extensionFromDrag(double requiredDrag)
