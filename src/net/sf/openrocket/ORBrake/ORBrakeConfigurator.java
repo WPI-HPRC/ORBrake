@@ -45,9 +45,6 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 		spinP.setEditor(new SpinnerEditor(spinP));
 		panel.add(spinP, "w 65lp!");
 		
-		UnitSelector unitP = new UnitSelector(P);
-		panel.add(unitP, "w 25");
-		
 		BasicSlider sliderP = new BasicSlider(P.getSliderModel(0, 10));
 		panel.add(sliderP, "w 75lp, wrap");
 		
@@ -58,9 +55,6 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 		JSpinner spinI = new JSpinner(I.getSpinnerModel());
 		spinI.setEditor(new SpinnerEditor(spinI));
 		panel.add(spinI, "w 65lp!");
-		
-		UnitSelector unitI = new UnitSelector(I);
-		panel.add(unitI, "w 25");
 		
 		BasicSlider sliderI = new BasicSlider(I.getSliderModel(0, 5));
 		panel.add(sliderI, "w 75lp, wrap");
@@ -73,11 +67,9 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 		spinD.setEditor(new SpinnerEditor(spinD));
 		panel.add(spinD, "w 65lp!");
 		
-		UnitSelector unitD = new UnitSelector(D);
-		panel.add(unitD, "w 25");
-		
 		BasicSlider sliderD = new BasicSlider(D.getSliderModel(0, 3));
 		panel.add(sliderD, "w 75lp, wrap");
+		
 		
 		return panel;
 	}
