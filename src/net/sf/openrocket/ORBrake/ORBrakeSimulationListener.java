@@ -12,16 +12,16 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 //    double velocity;
 //    double altitude;
 //    double thrust;
-    double setpoint = 4550/3.281; //desired altitude in feet
+    double setpoint; //desired altitude in feet
         
     // Input parameters for PID controller
-	double Kp = 1; //proportional gain constant
-    double Ki = 0; //integral gain constant
-    double Kd = 0; //derivative gain constant
-    double tau = 1; //low pass filter time constant
+	double Kp; //proportional gain constant
+    double Ki; //integral gain constant
+    double Kd; //derivative gain constant
+    double tau; //low pass filter time constant
 //	double min_inte = 1; //integral min limit
 //	double max_inte = 5; //integral max limit
-    double T = 1; //sample time in sec
+    double T; //sample time in sec
     
     // Memory variables for PID controller
     double inte = 0; //integral term
@@ -38,8 +38,14 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     		{-1.161195104, -0.001690272, -0.003398721, 0.0000376809, 0.002936851}	// 100%
     };
 
-	public ORBrakeSimulationListener() {
+	public ORBrakeSimulationListener(double setpoint, double Kp, double Ki, double Kd, double tau, double T) {
 		super();
+		this.setpoint = setpoint;
+		this.Kp = Kp;
+		this.Ki = Ki;
+		this.Kd = Kd;
+		this.tau = tau;
+		this.T = T;
 	}
 	
 	@Override
