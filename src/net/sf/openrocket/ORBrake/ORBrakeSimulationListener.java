@@ -101,8 +101,23 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     {
     	// Initial conditions  	
     	double out = 0;
-    	double measure = status.getRocketPosition().z;
+    	double alt = status.getRocketPosition().z;
     	double velocity = status.getRocketVelocity().length();
+    	double vertVelocity = status.getRocketVelocity().z;
+    	
+//    	double mass = status.getSimulationConditions().getRocket().getMass();
+    	double mass = 20.02;
+    	double gravity = status.getSimulationConditions().getGravityModel().getGravity(status.getRocketWorldPosition());
+//    	double Cd = status.getSimulationConditions().getAerodynamicCalculator().getAerodynamicForces().getCD();
+    	double Cd = 0.49;
+    	double refArea = status.getConfiguration().getReferenceArea();
+    	
+    	double termVelocity = Math.sqrt((2*mass*gravity)/( Cd * refArea *1.225));
+    	double predApogee = alt+(((Math.pow(termVelocity,2))/(2*gravity))* Math.log((Math.pow(vertVelocity,2)+Math.pow(termVelocity,2))/(Math.pow(termVelocity,2))));
+    	
+    	double measure = predApogee;
+    	
+    	System.out.println(mass);
     	
     	if (thrust == 0)
     	{    		
