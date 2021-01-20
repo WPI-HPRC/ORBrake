@@ -9,7 +9,7 @@ import net.sf.openrocket.simulation.extension.AbstractSimulationExtensionProvide
 public class ORBrakeProvider extends AbstractSimulationExtensionProvider {
 	
 	public ORBrakeProvider() {
-		super(ORBrake.class, "Flight", "OR Brake");
+		super(ORBrake.class, "WPI", "OR Brake");
 	}
 	
 }
