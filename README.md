@@ -1,5 +1,5 @@
 # ORBrake
-An open rocket extension for controllable air brakes.
+An OpenRocket extension for controllable air brakes.  When added to a simulation, a controller processes the rocket's state in order to select required drag in order to bring your vehicle's apogee as close as possible to a given target altitude.  This is primarily used for designing controllers for these systems to fly on actual target altitude rockets.
 
 ## Installing
 1. To install ORBrake, click on `Releases` on the right.  
@@ -17,13 +17,15 @@ To use ORBrake, it must be enabled on your simulation.  To do this, create a new
 ORBrake is written in Java.  This section explains what dependencies are required to build the project as well as how to configure the development environment.
 ### Dependencies
 1. [jdk 8](https://adoptopenjdk.net/): OpenRocket requires Java 8.  More recent versions are incompatible.  To compile code, jdk 8 is required.
-1. [Apache Ant](https://mkyong.com/ant/how-to-install-apache-ant-on-windows/): Ant is used to automate the build process.
+1. [Apache Ant](https://mkyong.com/ant/how-to-install-apache-ant-on-windows/): Ant is used to automate the build process.  Note that if you are using Eclipse as your IDE, Ant is built in and you don't need to download it seperetly.
 1. [Eclipse](https://github.com/WPIRoboticsEngineering/ESP32ArduinoEclipseInstaller) *[Recomended]*: While not explicetly required for this project, you can use the Sloeber Eclipse that is used for HPRC's embedded firmware programs.  There is no reason you couldn't use other IDEs like IDEA or VIM (depending on how much of a hacker you are) but the environment setup will be up to you.
-1. OpenRocket 15.03: For obvious reasons, this OpenRocket plugin requires OpenRocket to run.  Version 15.03, the most recent release, is included in this repo.
+1. OpenRocket 15.03: For obvious reasons, this OpenRocket plugin requires OpenRocket to run.  Version 15.03, the most recent official release, is included in this repo.
 
 ### Eclipse Setup
+_Note: Some of these steps my automatically be done by importing from the repository.  You may not have to do every one of them, but you should still verify they are completed.  These instructions should enable you to configure the environment from scratch or in a different IDE._
 1. Start by importing the project into Eclipse via `File->Import->Git->Projects from Git`.
 1. Add `OpenRocket-15.03.jar` to the class path via `Project->Properties->Java Build Path->Libraries->Add External JARs...`
+1. Add `JUnit 5` to the class path via `Project->Properties->Java Build Path->Libraries->Add Library...`
 1. Go to `Window->Preferences->Java->Installed JREs` and select jdk 8. 
     1. If jdk 8 is not on the list, select `Add...`
     1. Select `Standard VM` then click `Next >`
