@@ -14,7 +14,7 @@ class ORBrakeTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		listener = new ORBrakeSimulationListener(2000.0, 10.0, 0.0, 0.0, 1.0, .5);
+		listener = new ORBrakeSimulationListener(2000.0, 10.0, 0.0, 0.0, 1.0, 10, .4);
 	}
 
 //	@AfterAll

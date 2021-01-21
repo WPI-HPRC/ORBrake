@@ -6,6 +6,9 @@ import net.sf.openrocket.simulation.extension.AbstractSimulationExtension;
 
 public class ORBrake extends AbstractSimulationExtension 
 {
+	/**
+	 * GUI back end and listener instantiation.
+	 */
     @Override
     public String getName() 
     {
@@ -21,7 +24,7 @@ public class ORBrake extends AbstractSimulationExtension
     @Override
     public void initialize(SimulationConditions conditions) throws SimulationException
     {
-        conditions.getSimulationListenerList().add(new ORBrakeSimulationListener(getSetpoint(), getKp(), getKi(), getKd(), getTau(), getT()));
+        conditions.getSimulationListenerList().add(new ORBrakeSimulationListener(getSetpoint(), getKp(), getKi(), getKd(), getTau(), getCd(), getMass()));
     }
     
     public double getSetpoint()
@@ -74,13 +77,24 @@ public class ORBrake extends AbstractSimulationExtension
     	fireChangeEvent();
     }
     
-    public double getT()
+    public double getCd()
     {
-    	return config.getDouble("T", 1.0);
+    	return config.getDouble("Cd", .49);
     }
-    public void setT(double T)
+    public void setCd(double Cd)
     {
-    	config.put("T", T);
+    	config.put("Cd", Cd);
+    	fireChangeEvent();
+    }
+    
+    
+    public double getMass()
+    {
+    	return config.getDouble("Mass", 20.02);
+    }
+    public void setMass(double mass)
+    {
+    	config.put("Mass", mass);
     	fireChangeEvent();
     }
     

@@ -16,6 +16,9 @@ import net.sf.openrocket.unit.UnitGroup;
 
 @Plugin
 public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigurator<ORBrake> {
+	/**
+	 * The configurator is responsible for creating the config GUI when the extension is loaded.
+	 */
 	
 	public ORBrakeConfigurator() {
 		super(ORBrake.class);
@@ -94,19 +97,32 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 		panel.add(sliderTau, "w 75lp, wrap");
 		
 		
-		panel.add(new JLabel("Sample Time:"));
-		DoubleModel T = new DoubleModel(extension, "T", UnitGroup.UNITS_TIME_STEP, 0);
+		panel.add(new JLabel("Drag Coeficient:"));
+		DoubleModel Cd = new DoubleModel(extension, "Cd", UnitGroup.UNITS_COEFFICIENT, 0);
 		
-		JSpinner spinT = new JSpinner(T.getSpinnerModel());
-		spinT.setEditor(new SpinnerEditor(spinT));
-		panel.add(spinT, "w 65lp!");
+		JSpinner spinCd = new JSpinner(Cd.getSpinnerModel());
+		spinCd.setEditor(new SpinnerEditor(spinCd));
+		panel.add(spinCd, "w 65lp!");
 		
-		UnitSelector unitT = new UnitSelector(T);
-		panel.add(unitT, "w 25");
+		UnitSelector unitCd = new UnitSelector(Cd);
+		panel.add(unitCd, "w 25");
 		
-		BasicSlider sliderT = new BasicSlider(T.getSliderModel(0, 3));
-		panel.add(sliderT, "w 75lp, wrap");
+		BasicSlider sliderCd = new BasicSlider(Cd.getSliderModel(0, 2));
+		panel.add(sliderCd, "w 75lp, wrap");
 		
+		
+		panel.add(new JLabel("Estimate Mass:"));
+		DoubleModel Mass = new DoubleModel(extension, "Mass", UnitGroup.UNITS_COEFFICIENT, 0);
+		
+		JSpinner spinMass = new JSpinner(Mass.getSpinnerModel());
+		spinMass.setEditor(new SpinnerEditor(spinMass));
+		panel.add(spinMass, "w 65lp!");
+		
+		UnitSelector unitMass = new UnitSelector(Mass);
+		panel.add(unitMass, "w 25");
+		
+		BasicSlider sliderMass = new BasicSlider(Mass.getSliderModel(0, 40));
+		panel.add(sliderMass, "w 75lp, wrap");
 		
 		return panel;
 	}
