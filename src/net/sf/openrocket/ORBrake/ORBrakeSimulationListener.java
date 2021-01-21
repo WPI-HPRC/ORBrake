@@ -8,26 +8,29 @@ import net.sf.openrocket.simulation.listeners.AbstractSimulationListener;
 import net.sf.openrocket.aerodynamics.FlightConditions;
 
 public class ORBrakeSimulationListener extends AbstractSimulationListener {
+	/**
+	 * The simulation listener connects to and influences simulations that is
+	 * attached to.  
+	 */
 
-//    double velocity;
-//    double altitude;
-//    double thrust;
-    double setpoint; //desired altitude in feet
-        
+	
     // Input parameters for PID controller
-	double Kp; //proportional gain constant
-    double Ki; //integral gain constant
-    double Kd; //derivative gain constant
-    double tau; //low pass filter time constant
-//	double min_inte = 1; //integral min limit
-//	double max_inte = 5; //integral max limit
-    double T; //sample time in sec
+	double setpoint; // Target altitude in feet
+	double Kp; 			// Proportional gain constant
+    double Ki; 			// Integral gain constant
+    double Kd; 			// Derivative gain constant
+    double tau; 		// Low pass filter time constant
+    double T = .05; 	// Sample time in sec
+    
+    // Input parameters for apogee estimator
+    double Cd;
+    double mass;
     
     // Memory variables for PID controller
-    double inte = 0; //integral term
-    double prev_err = 0; //previous error
-    double diff = 0; //differential term
-    double prev_measure = 0; //previous measurement
+    double inte = 0; 			// Integral term
+    double prev_err = 0; 		// Previous error
+    double diff = 0; 			// Differential term
+    double prev_measure = 0; 	// Previous measurement
     
     private static final double surfConst[][] = {	// Surface constants for presimulated airbrake extensions.
     		{-0.000000000, 0.000000000, -0.000000000, 0.0000000000, 0.000000000},	// 0  %
@@ -38,30 +41,26 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     		{-1.161195104, -0.001690272, -0.003398721, 0.0000376809, 0.002936851}	// 100%
     };
 
-	public ORBrakeSimulationListener(double setpoint, double Kp, double Ki, double Kd, double tau, double T) {
+	public ORBrakeSimulationListener(double setpoint, double Kp, double Ki, double Kd, double tau) {
 		super();
 		this.setpoint = setpoint;
 		this.Kp = Kp;
 		this.Ki = Ki;
 		this.Kd = Kd;
 		this.tau = tau;
-		this.T = T;
 	}
 	
 	@Override
-    public FlightConditions postFlightConditions(SimulationStatus status, FlightConditions conditions)
-    /**
-     * Called immediately after the flight conditions of the current time 
-     * step so that relevant ones can be extracted.
-     * 
-     * @param	status		Object that contains simulation status details.
-     * @param	conditions	Object that contains flight condition details.
-     * @return	null.
-     */
-    {
-//        velocity = conditions.getVelocity();
-        return null; 
-    }
+	public void startSimulation(SimulationStatus status)
+	/**
+	 * Gets the time step at the start of the simulation.
+	 * 
+	 * @param	status The status object at the start of the sim.
+	 * @return void
+	 */
+	{
+    	T = status.getSimulationConditions().getTimeStep();
+	}
 
     @Override
     public double postSimpleThrustCalculation(SimulationStatus status, double thrust) // throws SimulationException
@@ -74,16 +73,14 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
      * @return	The modified thrust to be actually applied.
      */
     {
-        // if (status.getSimulationTime() )
-//    	status.getRocketVelocity().normalize();
-//    	this.thrust = thrust;
-//    	this.altitude = status.getRocketPosition().z;
-        return thrust + airbrakeForce(status, thrust);
+    	double drag = airbrakeForce(status, thrust);
+    	System.out.println(drag);
+        return thrust + drag;
     }
     
     double airbrakeForce(SimulationStatus status, double thrust)
     {
-    	double requiredDrag = requiredDrag(setpoint, status, thrust);
+    	double requiredDrag = requiredDrag(status, thrust);
     	double surf = dragSurface(5, status.getRocketPosition().z, status.getRocketVelocity().length());
     	if (requiredDrag > surf) {
     		requiredDrag = surf;
@@ -93,10 +90,12 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
         return -requiredDrag;
     }
     
-    double requiredDrag(double SP,SimulationStatus status, double thrust) //PID controller to get updated drag coefficient
+    double requiredDrag(SimulationStatus status, double thrust) //PID controller to get updated drag coefficient
     /**
-     * SP = desired altitude setpoint
-     * measure = actual altitude
+     * Computes required drag using a PID controller.
+     * 
+     * @param	status	The current simulation status object.
+     * @param	thrust	The current thrust of the vehicle.
      */
     {
     	// Initial conditions  	
@@ -106,23 +105,18 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	double vertVelocity = status.getRocketVelocity().z;
     	
 //    	double mass = status.getSimulationConditions().getRocket().getMass();
-    	double mass = 20.02;
-    	double gravity = status.getSimulationConditions().getGravityModel().getGravity(status.getRocketWorldPosition());
 //    	double Cd = status.getSimulationConditions().getAerodynamicCalculator().getAerodynamicForces().getCD();
-    	double Cd = 0.49;
+    	double gravity = status.getSimulationConditions().getGravityModel().getGravity(status.getRocketWorldPosition());
     	double refArea = status.getConfiguration().getReferenceArea();
     	
     	double termVelocity = Math.sqrt((2*mass*gravity)/( Cd * refArea *1.225));
     	double predApogee = alt+(((Math.pow(termVelocity,2))/(2*gravity))* Math.log((Math.pow(vertVelocity,2)+Math.pow(termVelocity,2))/(Math.pow(termVelocity,2))));
-    	
-    	double measure = predApogee;
-    	
-    	System.out.println(mass);
-    	
+
+    	// PID Controller
     	if (thrust == 0)
     	{    		
     		// Error function
-	    	double err = SP - measure;
+	    	double err = setpoint - predApogee;
 	    	
 	    	// Proportional term
 	    	double prop = Kp*err;
@@ -133,8 +127,8 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	// Anti-wind up (dynamic integral clamping)
 	    	double min_inte; //integral min limit
 	    	double max_inte; //integral max limit
-	    	if (dragSurface(5, measure, velocity) > prop) {
-	    		max_inte = dragSurface(5, measure, velocity) - prop;
+	    	if (dragSurface(5, predApogee, velocity) > prop) {
+	    		max_inte = dragSurface(5, predApogee, velocity) - prop;
 	    	} else {
 	    		max_inte = 0;
 	    	}
@@ -150,17 +144,17 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	}
 	    	
 	    	// Differential term
-	    	diff = ( -2*Kd*(measure-prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
+	    	diff = ( -2*Kd*(predApogee - prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
 	    	
 	    	// Output 
 	    	out = prop + inte + diff;
 	    	
 	    	// Update memory
 	    	prev_err = err;
-	    	prev_measure = measure;
+	    	prev_measure = predApogee;
 	    }
     	
-    	return out; //required drag
+    	return out; 
     }
     
 //    double extensionFromDrag(double requiredDrag)

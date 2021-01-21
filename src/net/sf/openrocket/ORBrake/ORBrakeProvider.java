@@ -7,6 +7,9 @@ import net.sf.openrocket.simulation.extension.AbstractSimulationExtensionProvide
 
 @Plugin
 public class ORBrakeProvider extends AbstractSimulationExtensionProvider {
+	/**
+	 * Lists the plugin in the simulation options.
+	 */
 	
 	public ORBrakeProvider() {
 		super(ORBrake.class, "WPI", "OR Brake");
