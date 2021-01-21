@@ -41,13 +41,15 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     		{-1.161195104, -0.001690272, -0.003398721, 0.0000376809, 0.002936851}	// 100%
     };
 
-	public ORBrakeSimulationListener(double setpoint, double Kp, double Ki, double Kd, double tau) {
+	public ORBrakeSimulationListener(double setpoint, double Kp, double Ki, double Kd, double tau, double Cd, double mass) {
 		super();
 		this.setpoint = setpoint;
 		this.Kp = Kp;
 		this.Ki = Ki;
 		this.Kd = Kd;
 		this.tau = tau;
+		this.Cd = Cd;
+		this.mass = mass;
 	}
 	
 	@Override
@@ -74,7 +76,6 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
      */
     {
     	double drag = airbrakeForce(status, thrust);
-    	System.out.println(drag);
         return thrust + drag;
     }
     
