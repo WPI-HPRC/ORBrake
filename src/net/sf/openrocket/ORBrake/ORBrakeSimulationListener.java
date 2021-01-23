@@ -120,7 +120,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	double err = setpoint - predApogee;
 	    	
 	    	// Proportional term
-	    	double prop = Kp*err;
+	    	double prop = -Kp*err;
 	    	
 	    	// Integral term
 	    	inte += 0.5*Ki*T*(err+prev_err);
