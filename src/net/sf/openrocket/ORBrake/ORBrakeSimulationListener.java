@@ -15,7 +15,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 
 	
     // Input parameters for PID controller
-	double setpoint; // Target altitude in feet
+	double setpoint; 	// Target altitude in feet
 	double Kp; 			// Proportional gain constant
     double Ki; 			// Integral gain constant
     double Kd; 			// Derivative gain constant

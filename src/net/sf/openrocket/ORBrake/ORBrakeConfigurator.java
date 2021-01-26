@@ -37,7 +37,7 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 		UnitSelector unitS = new UnitSelector(S);
 		panel.add(unitS, "w 25");
 			
-		BasicSlider sliderS = new BasicSlider(S.getSliderModel(0, 3100));
+		BasicSlider sliderS = new BasicSlider(S.getSliderModel(914.4, 1828.8));
 		panel.add(sliderS, "w 75lp, wrap");
 		
 		

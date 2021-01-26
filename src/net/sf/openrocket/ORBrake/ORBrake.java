@@ -29,7 +29,7 @@ public class ORBrake extends AbstractSimulationExtension
     
     public double getSetpoint()
     {
-    	return config.getDouble("setpoint", 100.0);
+    	return config.getDouble("setpoint", 1371.6);
     }
     public void setSetpoint(double setpoint)
     {
