@@ -27,10 +27,10 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     double mass;
     
     // Memory variables for PID controller
-    double inte = 0; 			// Integral term
-    double prev_err = 0; 		// Previous error
-    double diff = 0; 			// Differential term
-    double prev_measure = 0; 	// Previous measurement
+    double integral = 0; 			// Integral term
+    double prev_error = 0; 		// Previous error
+    double derivative = 0; 			// Derivative term
+    double prev_predApogee = 0; 	// Previous predicted apogee
     
     private static final double surfConst[][] = {	// Surface constants for presimulated airbrake extensions.
     		{-0.000000000, 0.000000000, -0.000000000, 0.0000000000, 0.000000000},	// 0  %
@@ -57,7 +57,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	/**
 	 * Gets the time step at the start of the simulation.
 	 * 
-	 * @param	status The status object at the start of the sim.
+	 * @param	status The status object at the start of the simulation.
 	 * @return void
 	 */
 	{
@@ -117,13 +117,13 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	if (thrust == 0)
     	{    		
     		// Error function
-	    	double err = setpoint - predApogee;
+	    	double error = setpoint - predApogee;
 	    	
 	    	// Proportional term
-	    	double prop = -Kp*err;
+	    	double prop = -Kp*error;
 	    	
 	    	// Integral term
-	    	inte += 0.5*Ki*T*(err+prev_err);
+	    	integral += 0.5*Ki*T*(error+prev_error);
 	    	
 	    	// Anti-wind up (dynamic integral clamping)
 	    	double min_inte; //integral min limit
@@ -138,21 +138,21 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 	    	} else {
 	    		min_inte = 0;
 	    	}
-	    	if (inte > max_inte) {
-	    		inte = max_inte;
-	    	} else if (inte < min_inte) {
-	    		inte = min_inte;
+	    	if (integral > max_inte) {
+	    		integral = max_inte;
+	    	} else if (integral < min_inte) {
+	    		integral = min_inte;
 	    	}
 	    	
-	    	// Differential term
-	    	diff = ( -2*Kd*(predApogee - prev_measure) + (2*tau-T)*diff ) / (2*tau+T);
+	    	// Derivative term
+	    	derivative = ( -2*Kd*(predApogee - prev_predApogee) + (2*tau-T)*derivative ) / (2*tau+T);
 	    	
 	    	// Output 
-	    	out = prop + inte + diff;
+	    	out = prop + integral + derivative;
 	    	
 	    	// Update memory
-	    	prev_err = err;
-	    	prev_measure = predApogee;
+	    	prev_error = error;
+	    	prev_predApogee = predApogee;
 	    }
     	
     	return out; 
