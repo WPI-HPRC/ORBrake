@@ -21,7 +21,8 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     double Kd; 			// Derivative gain constant
     double tau; 		// Low pass filter time constant
     double T = .05; 	// Sample time in sec
-    double RotationRate;// Rotation rate in percent (0-1) per sec.
+    double ExtensionRate;// Rotation rate in percent (0-1) per sec.
+    double extension;
     
     // Input parameters for apogee estimator
     double Cd;
@@ -43,7 +44,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     };
 
 	public ORBrakeSimulationListener(double setpoint, double Kp, double Ki, double Kd, double tau, 
-			double Cd, double RotationRate, double mass) {
+			double Cd, double ExtensionRate, double mass) {
 		super();
 		this.setpoint = setpoint;
 		this.Kp = Kp;
@@ -51,6 +52,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
 		this.Kd = Kd;
 		this.tau = tau;
 		this.Cd = Cd;
+		this.ExtensionRate = ExtensionRate;
 		this.mass = mass;
 	}
 	
@@ -78,7 +80,14 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
      */
     {
     	double drag = airbrakeForce(status, thrust);
-        return thrust + drag;
+    	double requiredExtension = extensionFromDrag(drag, status.getRocketPosition().z, status.getRocketVelocity().length());
+    	double dextension;
+    	if (Math.abs(requiredExtension - extension) > this.ExtensionRate) {
+    		dextension = this.ExtensionRate;
+    	} else {
+    		dextension = requiredExtension - extension;
+    	}
+        return thrust + dragFromExtension(requiredExtension , status.getRocketPosition().z, status.getRocketVelocity().length());
     }
     
     double airbrakeForce(SimulationStatus status, double thrust)
@@ -160,41 +169,41 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	return out; 
     }
     
-//    double extensionFromDrag(double requiredDrag)
-//    /**
-//     * Computes the required extension to achieve a required drag.
-//     * 
-//     * @param requiredDrag	The desired drag from the control system.
-//     * @return	The percentage deployment that will produce that drag.
-//     */
-//    {
-//    	double[] drag = new double[6];
-//
-//    	// Compute drag for each known extension.
-//    	IntStream.range(0, 5).forEachOrdered(n -> {
-//    	    drag[n] = this.dragSurface(n);
-//    	});
-//    	
-//    	// Interpolate to find desired extension
-//    	double extension = 0;
-//    	double term;
-//    	
-//    	for (int i = 0; i < 5; ++i)
-//    	{
-//    		term = i;
-//    		for (int j = 0; j < 5; ++j)
-//    		{
-//        		if(j != i)
-//        		{
-//        			term *= (requiredDrag - drag[j]) / (drag[i] - drag[j]);
-//        		}
-//        	};
-//        	
-//        	extension += term;
-//    	};
-//    	extension *= 20;
-//    	return extension;
-//    }
+    double extensionFromDrag(double requiredDrag, double altitude, double velocity)
+    /**
+     * Computes the required extension to achieve a required drag.
+     * 
+     * @param requiredDrag	The desired drag from the control system.
+     * @return	The percentage deployment that will produce that drag.
+     */
+    {
+    	double[] drag = new double[6];
+
+    	// Compute drag for each known extension.
+    	IntStream.range(0, 5).forEachOrdered(n -> {
+    	    drag[n] = this.dragSurface(n, altitude, velocity);
+    	});
+    	
+    	// Interpolate to find desired extension
+    	double extension = 0;
+    	double term;
+    	
+    	for (int i = 0; i < 5; ++i)
+    	{
+    		term = i;
+    		for (int j = 0; j < 5; ++j)
+    		{
+        		if(j != i)
+        		{
+        			term *= (requiredDrag - drag[j]) / (drag[i] - drag[j]);
+        		}
+        	};
+        	
+        	extension += term;
+    	};
+    	extension *= 20;
+    	return extension;
+    }
     
     double dragSurface(int extNum, double altitude, double velocity)
     /**
