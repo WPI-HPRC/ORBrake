@@ -108,7 +108,21 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 		panel.add(unitCd, "w 25");
 		
 		BasicSlider sliderCd = new BasicSlider(Cd.getSliderModel(0, 2));
-		panel.add(sliderCd, "w 75lp, wrap");
+		panel.add(sliderCd, "w 75lp, wrap");		
+		
+		
+		panel.add(new JLabel("Actuation Speed:"));
+		DoubleModel RotationRate = new DoubleModel(extension, "RotationRate", UnitGroup.UNITS_RELATIVE, 0);
+		
+		JSpinner spinRotationRate = new JSpinner(RotationRate.getSpinnerModel());
+		spinRotationRate.setEditor(new SpinnerEditor(spinRotationRate));
+		panel.add(spinRotationRate, "w 65lp!");
+		
+		UnitSelector unitRotationRate = new UnitSelector(RotationRate);
+		panel.add(unitRotationRate, "w 25");
+		
+		BasicSlider sliderRotationRate = new BasicSlider(RotationRate.getSliderModel(0, 1));
+		panel.add(sliderRotationRate, "w 75lp, wrap");
 		
 		
 		panel.add(new JLabel("Estimate Mass:"));

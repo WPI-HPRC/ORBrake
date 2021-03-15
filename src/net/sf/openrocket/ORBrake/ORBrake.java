@@ -86,6 +86,17 @@ public class ORBrake extends AbstractSimulationExtension
     	config.put("Cd", Cd);
     	fireChangeEvent();
     }
+
+    
+    public double getRotationRate()
+    {
+    	return config.getDouble("RotationRate", .49);
+    }
+    public void setRotationRate(double RotationRate)
+    {
+    	config.put("RotationRate", RotationRate);
+    	fireChangeEvent();
+    }
     
     
     public double getMass()

@@ -21,6 +21,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     double Kd; 			// Derivative gain constant
     double tau; 		// Low pass filter time constant
     double T = .05; 	// Sample time in sec
+    double RotationRate;// Rotation rate in percent (0-1) per sec.
     
     // Input parameters for apogee estimator
     double Cd;
@@ -41,7 +42,8 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     		{-1.161195104, 0.001690272, -0.003398721, -0.0000376809, 0.002936851}	// 100%		
     };
 
-	public ORBrakeSimulationListener(double setpoint, double Kp, double Ki, double Kd, double tau, double Cd, double mass) {
+	public ORBrakeSimulationListener(double setpoint, double Kp, double Ki, double Kd, double tau, 
+			double Cd, double RotationRate, double mass) {
 		super();
 		this.setpoint = setpoint;
 		this.Kp = Kp;
