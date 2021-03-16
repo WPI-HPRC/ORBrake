@@ -24,7 +24,7 @@ public class ORBrake extends AbstractSimulationExtension
     @Override
     public void initialize(SimulationConditions conditions) throws SimulationException
     {
-        conditions.getSimulationListenerList().add(new ORBrakeSimulationListener(getSetpoint(), getKp(), getKi(), getKd(), getTau(), getCd(), getMass()));
+        conditions.getSimulationListenerList().add(new ORBrakeSimulationListener(getSetpoint(), getKp(), getKi(), getKd(), getTau(), getCd(), getRotationRate(), getMass()));
     }
     
     public double getSetpoint()

@@ -81,6 +81,8 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     {
     	double drag = airbrakeForce(status, thrust);
     	double requiredExtension = extensionFromDrag(drag, status.getRocketPosition().z, status.getRocketVelocity().length());
+    	
+    	// Limit extension rate
     	double dextension;
     	if (Math.abs(requiredExtension - extension) > this.ExtensionRate) {
     		dextension = this.ExtensionRate;
@@ -169,11 +171,27 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	return out; 
     }
     
+    double dragFromExtension(double extension, double altitude, double velocity)
+    /**
+     * Computes the drag caused at a given extension
+     * 
+     * @param extension		Extension percentage out of 1.0
+     * @param altitude		Altitude of the vehicle
+     * @param velocity		Magnitude of the velocity.
+     * @return	Induced drag in Newtons.
+     */
+    {
+    	
+    	return 1.0;
+    }
+    
     double extensionFromDrag(double requiredDrag, double altitude, double velocity)
     /**
      * Computes the required extension to achieve a required drag.
      * 
      * @param requiredDrag	The desired drag from the control system.
+     * @param altitude		Altitude of the vehicle
+     * @param velocity		Magnitude of the velocity.
      * @return	The percentage deployment that will produce that drag.
      */
     {
