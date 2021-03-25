@@ -89,7 +89,10 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	} else {
     		dextension = requiredExtension - extension;
     	}
-        return thrust + dragFromExtension(requiredExtension , status.getRocketPosition().z, status.getRocketVelocity().length());
+    	extension += dextension;
+    	extension = extension < 1.0 ? extension : 1.0;
+    	extension = extension > 0.0 ? extension : 0.0;
+        return thrust + dragFromExtension(extension, status.getRocketPosition().z, status.getRocketVelocity().length());
     }
     
     double airbrakeForce(SimulationStatus status, double thrust)
@@ -181,8 +184,17 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
      * @return	Induced drag in Newtons.
      */
     {
+    	int extensionIndex = (int) Math.floor(extension / 20);
+    	double extensionRemainder = extension - extensionIndex;
+    	System.out.println(extension);
+    	System.out.println(extensionIndex);
+    	double drag = this.dragSurface(extensionIndex, altitude, velocity);
+    	if (extensionIndex < 5)
+    	{
+    		drag = (this.dragSurface(extensionIndex + 1, altitude, velocity) - drag) * extensionRemainder;
+    	}
     	
-    	return 1.0;
+    	return drag;
     }
     
     double extensionFromDrag(double requiredDrag, double altitude, double velocity)
