@@ -92,7 +92,7 @@ public class ORBrakeSimulationListener extends AbstractSimulationListener {
     	extension += dextension;
     	extension = extension < 1.0 ? extension : 1.0;
     	extension = extension > 0.0 ? extension : 0.0;
-        return thrust + dragFromExtension(extension, status.getRocketPosition().z, status.getRocketVelocity().length());
+        return thrust - dragFromExtension(extension, status.getRocketPosition().z, status.getRocketVelocity().length());
     }
     
     double airbrakeForce(SimulationStatus status, double thrust)
