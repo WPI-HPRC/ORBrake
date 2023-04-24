@@ -3,6 +3,8 @@ An OpenRocket extension for controllable air brakes.  When added to a simulation
 
 ORBrake was developed specifically for WPI HPRC's [Sirius Rocket](https://aiaa.wpi.edu/hprc/sirius).  Because of this, there are some parameters that are not exposed to the user, specificlly the surfConst array within ORBrakeSimulationListener.java which is computed using surfaces fit to CFD data.  If you're interested in making ORBrake work for your vehicle, consider contacting us.  There is the possibility the program will eventually be made to work for different rockets in the future, but as of now, there is no set plan for this.
 
+Please direct inquiries about this program to the HPRC Officer Board at hprc-officers@wpi.edu.
+
 **DISCLAIMER: While ORBrake simulates drag, the plugin DOES NOT simulate the motion of a rocket's center of aerodynamic pressure.  YOU ARE RESPONSIBLE for ensuring that your rocket remains stable and safe throughout flight.  There is no guarantee of accuracy or safety for simulations done with ORBrake as it has yet to be validated with experimental data.**
 
 ## Installing
