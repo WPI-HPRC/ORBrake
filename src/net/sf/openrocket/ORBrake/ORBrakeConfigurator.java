@@ -97,7 +97,7 @@ public class ORBrakeConfigurator extends AbstractSwingSimulationExtensionConfigu
 		panel.add(sliderTau, "w 75lp, wrap");
 		
 		
-		panel.add(new JLabel("Drag Coeficient:"));
+		panel.add(new JLabel("Drag Coefficient:"));
 		DoubleModel Cd = new DoubleModel(extension, "Cd", UnitGroup.UNITS_COEFFICIENT, 0);
 		
 		JSpinner spinCd = new JSpinner(Cd.getSpinnerModel());
