@@ -11,7 +11,7 @@
 	<target name="build" description="Builds the plugin.">
 		<echo>Building...</echo>
         <mkdir dir="${build.dir}"/>
-        <javac debug="true" srcdir="${src.dir}" destdir="${build.dir}" classpath="OpenRocket-15.03.jar" includeantruntime="false" source="1.8" target="1.8">
+        <javac debug="true" srcdir="${src.dir}" destdir="${build.dir}" classpath="OpenRocket-23.09.jar" includeantruntime="false" source="17" target="17">
         	<exclude name="**/ORBrakeTest.java"/>
     	</javac>
 		<echo>Done</echo>
@@ -22,7 +22,7 @@
     	<jar destfile="${env.APPDATA}/OpenRocket/Plugins/ORBrake.jar" basedir="${build.dir}"/>
 		<echo>Done</echo>
 		<echo>Running OpenRocket...</echo>
-    	<java jar="OpenRocket-15.03.jar" fork="true"/>
+    	<java jar="OpenRocket-23.09.jar" fork="true"/>
 		<echo>Done</echo>
     </target>
 	

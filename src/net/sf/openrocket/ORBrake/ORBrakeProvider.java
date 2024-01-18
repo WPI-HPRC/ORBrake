@@ -12,7 +12,7 @@ public class ORBrakeProvider extends AbstractSimulationExtensionProvider {
 	 */
 	
 	public ORBrakeProvider() {
-		super(ORBrake.class, "WPI", "OR Brake");
+		super(ORBrake.class, "Flight", "OR Brake");
 	}
 	
 }
